@@ -1,0 +1,230 @@
+// DOM Elements
+const chatContainer = document.getElementById('chat-container');
+const userInput = document.getElementById('user-input');
+const sendButton = document.getElementById('send-btn');
+const newChatButton = document.getElementById('new-chat');
+const profileButton = document.getElementById('profile-btn');
+const authModal = document.getElementById('auth-modal');
+const closeModalButton = document.querySelector('.close');
+const authTabs = document.querySelectorAll('.auth-tab');
+const loginForm = document.getElementById('login-form');
+const signupForm = document.getElementById('signup-form');
+const chatHistory = document.getElementById('chat-history');
+
+// Sample data for testing (would be replaced with actual backend calls)
+let currentUser = null;
+let conversations = [];
+let currentConversation = null;
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize empty chat
+    startNewChat();
+    
+    // Handle message sending
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    // Handle new chat creation
+    newChatButton.addEventListener('click', startNewChat);
+    
+    // Handle profile/auth
+    profileButton.addEventListener('click', () => {
+        authModal.style.display = 'block';
+    });
+    
+    closeModalButton.addEventListener('click', () => {
+        authModal.style.display = 'none';
+    });
+    
+    // Handle auth tabs
+    authTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Update active tab
+            authTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Show corresponding form
+            if (tab.dataset.tab === 'login') {
+                loginForm.style.display = 'flex';
+                signupForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'flex';
+            }
+        });
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === authModal) {
+            authModal.style.display = 'none';
+        }
+    });
+    
+    // Handle chat history clicks
+    chatHistory.addEventListener('click', (e) => {
+        if (e.target.classList.contains('history-item')) {
+            // In a real app, this would load the specific conversation
+            alert('Loading conversation: ' + e.target.textContent);
+        }
+    });
+});
+
+// Function to start a new chat
+function startNewChat() {
+    // Clear chat container (except welcome message)
+    chatContainer.innerHTML = '';
+    
+    // Add AI welcome message
+    addMessage('StudyAI', 'Hi there! I'm your AI study assistant. How can I help you with your schoolwork today?', false);
+    
+    // Create new conversation object
+    currentConversation = {
+        id: Date.now(),
+        title: 'New Conversation',
+        messages: []
+    };
+    
+    // Add to conversations array (in a real app, this would be stored in a database)
+    conversations.push(currentConversation);
+    
+    // Clear input
+    userInput.value = '';
+    userInput.focus();
+}
+
+// Function to send a message
+function sendMessage() {
+    const message = userInput.value.trim();
+    
+    if (message) {
+        // Add user message to chat
+        addMessage('You', message, true);
+        
+        // Clear input
+        userInput.value = '';
+        
+        // In a real app, this is where you'd call the DeepSeek API
+        // For now, we'll just simulate a response after a delay
+        showTypingIndicator();
+        
+        setTimeout(() => {
+            removeTypingIndicator();
+            
+            // Sample AI responses (in a real app, this would come from the API)
+            const responses = [
+                "I can help you understand that concept. Let me break it down...",
+                "That's an interesting question! Here's what you need to know...",
+                "Let me explain this step by step...",
+                "Here's how you can approach this problem...",
+                "Let me research that for you. Based on my knowledge..."
+            ];
+            
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            addMessage('StudyAI', randomResponse, false);
+        }, 1500);
+    }
+}
+
+// Function to add a message to the chat
+function addMessage(sender, text, isUser) {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+    messageElement.classList.add(isUser ? 'user-message' : 'ai-message');
+    
+    const now = new Date();
+    const timeString = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+    
+    messageElement.innerHTML = `
+        <div class="message-content">
+            <div class="sender">${sender}</div>
+            <div class="text">${text}</div>
+        </div>
+        <div class="timestamp">${timeString}</div>
+    `;
+    
+    chatContainer.appendChild(messageElement);
+    
+    // Scroll to bottom
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    
+    // Add to current conversation (in a real app, this would be stored in a database)
+    if (currentConversation) {
+        currentConversation.messages.push({
+            sender,
+            text,
+            timestamp: now
+        });
+        
+        // Update conversation title if it's the first user message
+        if (isUser && currentConversation.messages.filter(m => m.sender === 'You').length === 1) {
+            currentConversation.title = text.substring(0, 30) + (text.length > 30 ? '...' : '');
+            // In a real app, you would update the chat history UI here
+        }
+    }
+}
+
+// Function to show typing indicator
+function showTypingIndicator() {
+    const typingElement = document.createElement('div');
+    typingElement.classList.add('message', 'ai-message', 'typing-indicator');
+    typingElement.innerHTML = `
+        <div class="message-content">
+            <div class="sender">StudyAI</div>
+            <div class="text">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+    `;
+    
+    chatContainer.appendChild(typingElement);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Function to remove typing indicator
+function removeTypingIndicator() {
+    const typingIndicator = document.querySelector('.typing-indicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+// Additional CSS for typing indicator
+const style = document.createElement('style');
+style.textContent = `
+    .typing-indicator .text {
+        display: flex;
+        gap: 4px;
+    }
+    
+    .typing-indicator .dot {
+        height: 8px;
+        width: 8px;
+        background-color: #adb5bd;
+        border-radius: 50%;
+        display: inline-block;
+        animation: pulse 1.4s infinite ease-in-out;
+    }
+    
+    .typing-indicator .dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-indicator .dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes pulse {
+        0%, 60%, 100% { transform: scale(1); opacity: 1; }
+        30% { transform: scale(1.2); opacity: 0.8; }
+    }
+`;
+document.head.appendChild(style);

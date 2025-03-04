@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyAI - Your AI Study Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Adding Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar for chat history -->
+        <div class="sidebar">
+            <div class="new-chat-btn">
+                <button id="new-chat"><i class="fa-solid fa-plus"></i> New Chat</button>
+            </div>
+            
+            <div class="history-container">
+                <h3>Chat History</h3>
+                <div class="chat-history" id="chat-history">
+                    <!-- Chat history will be populated dynamically -->
+                    <div class="history-item">Math homework help</div>
+                    <div class="history-item">Essay brainstorming</div>
+                    <div class="history-item">Science project ideas</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="settings">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </div>
+                <div class="usage-info">
+                    Your Usage: <span id="usage-count">45</span>/<span id="usage-limit">100</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main chat area -->
+        <div class="main">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">StudyAI</div>
+                <div class="user-profile">
+                    <button id="profile-btn">
+                        <i class="fa-solid fa-user"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat container -->
+            <div class="chat-container" id="chat-container">
+                <!-- AI welcome message -->
+                <div class="message ai-message">
+                    <div class="message-content">
+                        <div class="sender">StudyAI</div>
+                        <div class="text">Hi there! I'm your AI study assistant. How can I help you with your schoolwork today?</div>
+                    </div>
+                    <div class="timestamp">Just now</div>
+                </div>
+                
+                <!-- Messages will be added here dynamically -->
+            </div>
+            
+            <!-- Input area -->
+            <div class="input-container">
+                <textarea id="user-input" placeholder="Message StudyAI..."></textarea>
+                <button id="send-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User authentication modals -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+            </div>
+            
+            <div class="auth-form" id="login-form">
+                <h2>Login</h2>
+                <input type="email" placeholder="Email" id="login-email">
+                <input type="password" placeholder="Password" id="login-password">
+                <button id="login-btn">Login</button>
+            </div>
+            
+            <div class="auth-form" id="signup-form" style="display: none;">
+                <h2>Sign Up</h2>
+                <input type="text" placeholder="Username" id="signup-username">
+                <input type="email" placeholder="Email" id="signup-email">
+                <input type="password" placeholder="Password" id="signup-password">
+                <button id="signup-btn">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
